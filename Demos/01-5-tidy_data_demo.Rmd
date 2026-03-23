@@ -1,0 +1,88 @@
+---
+title: "Tidy data demo"
+author: "Wing-Ho Ko"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages
+
+```{r}
+library(tidyverse)
+```
+
+## data tidying
+
+### Convert a wide table to a long and tidy table
+
+Inspect the `billboard` dataframe that comes with `tidyr`, which is a wide table that encode billboard ranks in the columns wk1, ..., wk76
+
+```{r}
+data(billboard, package="tidyr")
+billboard
+```
+
+Pivot the wide table into long table:
+
+```{r}
+pivot_longer(billboard, wk1:wk76, names_to = "week", values_to = "rank") 
+```
+
+A bit more processing: remove the prefix "wk" from the "week" values, and convert into integer
+
+```{r}
+pivot_longer(
+  billboard, wk1:wk76, 
+  names_to = "week", names_prefix = "wk",
+  values_to = "rank"
+) |> mutate(week = as.integer(week))
+```
+
+### Convert crammed column to tidy columns
+
+Import a summarized occurrence table
+
+```{r}
+occurrences <- read_csv("data/occurrences.csv")
+```
+
+```{r}
+head(occurrences)
+```
+
+Separate scientific names into genus and species
+
+```{r}
+separate_wider_delim(
+  occurrences, scientificName, " ", names=c("genus", "species")
+)
+```
+
+#### convert an entity-attribute-value table into wider tidy table
+
+Load the `economics_long` table (which originates from `ggplot2`)
+
+```{r}
+data(economics_long, package="ggplot2")
+```
+
+```{r}
+glimpse(economics_long)
+```
+
+Check the collection of measurements
+
+```{r}
+economics_long |> distinct(variable)
+```
+
+Pivot into a wider tidy table
+
+```{r}
+economics <- pivot_wider(economics_long, id_cols="date", names_from=variable, values_from=value)
+
+head(economics)
+```

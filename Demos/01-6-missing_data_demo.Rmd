@@ -1,0 +1,98 @@
+---
+title: "Tidy data demo"
+author: "Wing-Ho Ko"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load packages
+
+```{r}
+library(tidyverse)
+```
+
+## Dealing with missing values
+
+### Encode missing values when loading data
+
+Download the Karachi, Pakistan sea level data from <https://psmsl.org/data/obtaining/stations/204.php>. The data encode missing values as -99999 and is a semicolon-separated file
+
+```{r}
+read_delim(
+  "https://psmsl.org/data/obtaining/rlr.annual.data/204.rlrdata", delim=";",
+  col_names = c("year", "depth_mm", "missing_days", "quality_flag"),
+  na=c("", "NA", "-99999")
+) |> mutate(
+  year = as.numeric(year), 
+  depth_mm = as.numeric(depth_mm)
+)
+```
+
+### Handle missing data
+
+Load a simplified version of the storms data
+
+```{r}
+data(storms, package="dplyr")
+
+storms_sub <- storms |> 
+  select(name:hour | category | tropicalstorm_force_diameter)
+```
+
+Check the number of NA's for each row using `summary()`:
+
+```{r}
+summary(storms_sub)
+```
+
+Remove any observations that have NA's in them
+
+```{r}
+storms_notna <- drop_na(storms_sub)
+summary(storms_notna)
+```
+
+Count the number of rows removed, and note that it is bigger than the number of NA's in any individual columns
+
+```{r}
+nrow(storms_sub) - nrow(storms_notna)
+```
+
+Remove only the rows where category is NA:
+
+```{r}
+weather_cat = drop_na(storms_sub, category)
+summary(weather_cat)
+```
+
+Construct a data frame consisting only of entries for which category **is missing**:
+
+```{r}
+storms_isna = storms_sub |> filter(is.na(category))
+car::some(storms_isna)
+```
+
+### Complete implicit data
+
+Load the Ballard Locks salmon count data
+
+```{r}
+salmons <- read_csv("data/Ballard_salmon_counts.csv")
+```
+
+```{r}
+salmons
+```
+
+Fill in missing months
+
+```{r}
+salmons_filled <- salmons |> complete(year, month=seq(1, 12)) 
+```
+
+```{r}
+salmons_filled
+```

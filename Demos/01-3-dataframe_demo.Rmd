@@ -1,0 +1,91 @@
+---
+title: "R Dataframe Demo"
+author: "Wing-Ho Ko"
+output:
+  html_notebook: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading packages for use
+
+We'll load `readr` for importing external data as data frames and `dplyr` for data frame manipulation
+
+When a package is loaded using the `library()` function, the functions it defines become available in the workspace and can be called directly. 
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+## Loading external data into a dataframe
+
+As a demonstration, we'll load the storms dataset (included in the dplyr package) in both online and offline manner.
+
+To load the file directly from the internet, we note that the raw csv file can be reached from the link <https://raw.githubusercontent.com/tidyverse/dplyr/refs/heads/main/data-raw/storms.csv>. Using this as the argument to `read_csv()`, we do:
+
+```{r}
+read_csv("https://raw.githubusercontent.com/tidyverse/dplyr/refs/heads/main/data-raw/storms.csv")
+```
+
+Alternatively, download a copy of the csv file from <https://github.com/tidyverse/dplyr/blob/main/data-raw/storms.csv> and place it in the same folder as this markdown file. After that, we can load the file via:
+
+```{r}
+read_csv("storms.csv")
+```
+
+As with other data structure, you can assign a dataframe to a variable for future use and manipulation. In our case, we may do:
+
+```{r}
+storms <- read_csv("storms.csv")
+```
+
+Finally, since this is a dataset from a package we installed, we can also obtain the data via:
+
+```{r}
+data(storms, package="dplyr")
+```
+
+
+## Inspecting a dataframe
+
+Unlike csv or other pure text data format, each column of a data frame has a specific data type. To inspect that, use the `glimpse()` function from `dplyr`, which also display useful information such as the number of rows and columns, as well as a preview of the data
+
+```{r}
+glimpse(storms)
+```
+
+In addition, if you just want to sample some rows from the data frame, you can use `head()`, `tail()`, and (with the `car` package) `some()`
+
+(Note that instead of doing `library(car)`, we simply specify that the `some()` function should be loaded from the `car` package using `car::some()`)
+
+```{r}
+head(storms)
+```
+
+```{r}
+tail(storms)
+```
+
+```{r}
+car::some(storms)
+```
+
+To get the number of rows and columns programmatically (i.e., assignable to variables and thus can be further manipulated), use `nrow()` and `ncol()`
+
+```{r}
+nr <- nrow(storms)
+nc <- ncol(storms)
+
+print(c(nr, nc))
+```
+
+Extract the pressure values as a vector from the data frame
+
+```{r}
+pressure <- storms$pressure
+pressure
+```

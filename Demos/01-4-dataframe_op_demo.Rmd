@@ -1,0 +1,181 @@
+---
+title: "R Dataframe Operations Demo"
+author: "Wing-Ho Ko"
+output:
+  html_notebook: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading packages for use
+
+This time we'll load the entire `tidyverse` meta package in one go. We will also load `janitor` to help clean up column names
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+## Column operations
+
+### `select()`
+
+Extract only a few columns from the above data frame, as store the result in `storms_sub`
+
+Note that data frames are "immutable". This means that you should treat `storms` and `storms_sub` as completely independent of each other.
+
+```{r}
+storms_sub <- select(storms, 
+  c("name", "year", "month", "day", "hour", "wind", "pressure")
+)
+head(storms_sub)
+```
+
+Alternative syntax (often more convenient). Notice that column names are being treated like variable in this form
+
+```{r}
+storms_sub <- select(storms, name:hour | wind:pressure)
+head(storms_sub)
+```
+
+### `mutate()`
+
+Define a new column using `mutate()`
+
+```{r}
+storms_new <- mutate(storms_sub, wind_mph = wind * 1.151)
+some(storms_new)
+```
+
+If the named argument coincide with the name of an existing column, the existing column is being overwritten instead
+
+```{r}
+storms_new <- mutate(storms_new, year = as.character(year))
+car::some(storms_new)
+```
+
+### `rename()` and `relocate()`
+
+Rename a column:
+
+```{r}
+storms_new <- rename(storms_new, wind_knots=wind)
+car::some(storms_new)
+```
+
+reorder columns using relocate:
+
+```{r}
+storms_new <- relocate(storms_new, wind_mph, .after = wind_knots)
+some(storms_new)
+```
+
+Perform the above transformations on our dataframe in one go, and using the pipe operator `|>`
+
+```{r}
+storms_chained <- storms |> select(name:hour | wind:pressure) |> 
+  mutate(wind_mph = wind * 1.151) |>
+  mutate(year = as.character(year)) |>
+  rename(wind_knots=wind) |>
+  relocate(wind_mph, .after = wind_knots)
+
+some(storms_chained)
+```
+
+## Row operations
+
+### `filter()`
+
+Filter rows of a data frame
+
+```{r}
+storms_sub |> filter(wind > 150)
+```
+
+Filter rows of a data frame using compound conditions
+
+```{r}
+storms_sub |> filter(wind > 150 & pressure < 900)
+```
+
+### `arrange()`
+
+Arrange the rows of a data frame by the value of a single column
+
+```{r}
+storms_sub |> arrange(wind)
+```
+
+Arrange the rows of a data frame by a cascading set of columns
+
+```{r}
+storms_sub |> arrange(wind, pressure)
+```
+
+Display the storms with strongest wind by sorting wind in _descending_ order
+
+```{r}
+storms_sub |> arrange(desc(wind)) |> head()
+```
+
+### `distinct()`
+
+Extract unique combination of storm name and year
+
+```{r}
+storms_sub |> distinct(name, year)
+```
+
+Extract the first appearance of each storm
+
+```{r}
+storms_sub |> arrange(year, month, day, hour) |>
+  distinct(name, year, .keep_all=TRUE)
+```
+
+## Saving dataframe to .csv file or .rds file
+
+Create the data frame to be saved
+
+```{r}
+storms_first <- storms_sub |> arrange(year, month, day, hour) |>
+  distinct(name, year, .keep_all=TRUE)
+```
+
+Export the data frame as a .csv file
+
+```{r}
+write_csv(storms_first, "storms_first.csv")
+```
+
+Export the data frame to R native .rds file
+
+```{r}
+write_rds(storms_first, "storms_first.rda")
+```
+
+Load the saved rds file
+
+```{r}
+storms_from_rds <- read_rds("storms_first.rda")
+some(storms_from_rds)
+```
+
+## cleaning up "bad" column names
+
+Read a file with bad column names
+
+```{r}
+bad_names <- read_csv("data/bad_col_names.csv", name_repair="minimal")
+glimpse(bad_names)
+```
+
+Clean up column names using `clean_names()` from `janitor`
+
+```{r}
+repaired_names <- bad_names |> clean_names()
+glimpse(repaired_names)
+```
