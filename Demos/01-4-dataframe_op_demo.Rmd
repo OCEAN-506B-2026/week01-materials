@@ -63,7 +63,7 @@ Define a new column using `mutate()`
 
 ```{r}
 storms_new <- mutate(storms_sub, wind_mph = wind * 1.151)
-some(storms_new)
+car::some(storms_new)
 ```
 
 If the named argument coincide with the name of an existing column, the existing column is being overwritten instead
