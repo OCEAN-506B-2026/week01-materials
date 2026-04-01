@@ -27,15 +27,7 @@ In this week's exercise you will make heavy use of the Palmer penguins dataset. 
 
 5. What species of penguins appear in the database?
 
-## Exercise 3. Dealing with missing data
-
-Again load the Palmer penguins dataset as the data frame `penguins`
-
-1. How many rows in the `penguins` dataset contains at least one missing value? (Note: missing values are coded as "NA" in the csv file, which is automatically converted into `NA` by `read_csv()`)
-
-2. Recode all `NA` values in the `sex` column as `"unknown"`, call the result `penguins_re`. Display all columns of `penguins_re` for which sex is `"unknown"`
-
-## Exercise 4: tidying data
+## Exercise 3: tidying data
 
 We'll work with a subset of data from the World Health Organization Global Tuberculosis Report, which is included in `tidyr` under the variable name `who2`
 
@@ -55,6 +47,14 @@ Besides "country" and "year", the columns represent different diagnostic code, a
 1. Convert the wide table into long table format. Call the column of diagnostic code "code" and the column of value "count". Call the result `who2_long`. 
 
 2. Split the code into three columns "diagnosis", "gender", and "age_group". Call the result who2_tidy
+
+## Exercise 4. Dealing with missing data
+
+Again load the Palmer penguins dataset as the data frame `penguins`
+
+1. How many rows in the `penguins` dataset contains at least one missing value? (Note: missing values are coded as "NA" in the csv file, which is automatically converted into `NA` by `read_csv()`)
+
+2. Recode all `NA` values in the `sex` column as `"unknown"`, call the result `penguins_re`. Display all columns of `penguins_re` for which sex is `"unknown"`
 
 ## (Optional) Feedback questions
 
