@@ -19,6 +19,22 @@ library(tidyverse)
 library(janitor)
 ```
 
+
+## Loading the dataset
+
+Loading the storms dataset provided by dplyr
+
+```{r}
+data(storms, package="dplyr")
+```
+
+Inspect the dataset:
+
+```{r}
+glimpse(storms)
+```
+
+
 ## Column operations
 
 ### `select()`
