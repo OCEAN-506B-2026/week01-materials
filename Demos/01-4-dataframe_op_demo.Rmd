@@ -86,10 +86,10 @@ reorder columns using relocate:
 
 ```{r}
 storms_new <- relocate(storms_new, wind_mph, .after = wind_knots)
-some(storms_new)
+car::some(storms_new)
 ```
 
-Perform the above transformations on our dataframe in one go, and using the pipe operator `|>`
+Perform the above transformations on our data frame in one go, and using the pipe operator `|>`
 
 ```{r}
 storms_chained <- storms |> select(name:hour | wind:pressure) |> 
@@ -98,7 +98,7 @@ storms_chained <- storms |> select(name:hour | wind:pressure) |>
   rename(wind_knots=wind) |>
   relocate(wind_mph, .after = wind_knots)
 
-some(storms_chained)
+car::some(storms_chained)
 ```
 
 ## Row operations
